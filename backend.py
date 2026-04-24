@@ -110,6 +110,24 @@ def inicializar_sistema() -> sqlite3.Connection:
     conexion_principal = verificar_estado_almacenamiento(nombre_base_datos)
     return conexion_principal
 
+def registrar_cliente(conexion_activa: sqlite3.Connection, nombre: str, apellidos: str) -> None:
+    """Inserta un nuevo registro en la tabla Clientes y muestra el ID generado automaticamente."""
+    try:
+        cursor_insercion = conexion_activa.cursor()
+        
+        cursor_insercion.execute("""
+            INSERT INTO Clientes (nombre, apellidos) 
+            VALUES (?, ?)
+        """, (nombre, apellidos))
+        
+        conexion_activa.commit()
+        id_generado = cursor_insercion.lastrowid
+        
+        print(f"\n[Exito] Cliente registrado correctamente. Clave asignada: {id_generado}")
+        
+    except sqlite3.Error:
+        print("\n[!] Error critico: No se pudo registrar el cliente en la base de datos.")
 if __name__ == "__main__":
     conexion_app = inicializar_sistema()
     print("El sistema backend esta listo y protegido.")
+
